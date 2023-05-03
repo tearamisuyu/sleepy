@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image" href="https://cdn.discordapp.com/attachments/557281913757368350/1103199775295287316/IMG_20230422_120619_989.png">
+  <title>sleepy</title>
+</head>
+
+<body>
+  <div class="container">
+    <h1 class="title">sleepy</h1>
+    <input class="shutdown-timer" placeholder="timer" type="text">
+    <button class="shutdown-button button">shutdown</button>
+    <button class="shutdown-cancel button">cancel</button>
+    <button class="screenshot-button button">screenshot</button>
+    <div class="screenshot-container">
+
+    </div>
+  </div>
+</body>
+
+</html>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
+
+  body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  :root {
+    color: whitesmoke;
+    font-family: 'Noto Sans', sans-serif;
+    background-color: rgb(36, 36, 65);
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+    max-width: 412px;
+    justify-content: center;
+  }
+
+  .title {
+    text-align: center;
+    letter-spacing: 0.2rem;
+  }
+
+  .button {
+    margin: 0.5rem;
+    padding: 10px;
+    color: whitesmoke;
+    border: solid white 1px;
+    border-radius: 5rem;
+    font-family: 'Noto Sans', sans-serif;
+    letter-spacing: 0.1rem;
+    text-decoration: none;
+    font-weight: bold;
+    background-color: rgb(41, 36, 66);
+    transition: 0.5s;
+  }
+
+  .button:hover {
+    transition: 0.5s;
+    background-color: rgb(36, 36, 65);
+    cursor: pointer;
+  }
+
+  .shutdown-timer {
+    color: whitesmoke;
+    text-align: center;
+    font-size: 1.5rem;
+    border: none;
+    margin: 1rem;
+    outline: none;
+    background-color: inherit;
+  }
+
+  .screenshot {
+    align-items: center;
+    max-width: 412px;
+    height: auto;
+    margin-top: 1rem;
+  }
+
+</style>
+
+<script>
+  const shutdownButton = document.querySelector('.shutdown-button');
+  const screenshotButton = document.querySelector('.screenshot-button');
+  const cancelButton = document.querySelector('.shutdown-cancel');
+  const screenshotContainer = document.querySelector('.screenshot-container');
+
+  shutdownButton.addEventListener('click', () => {
+    const timer = document.querySelector('.shutdown-timer').value;
+
+    fetch('/api/shutdown', {
+      method: 'POST',
+      body: JSON.stringify({
+        operation: 'shutdown',
+        time: timer,
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    console.log(timer);
+  });
+
+  cancelButton.addEventListener('click', () => {
+    fetch('/api/shutdown', {
+      method: 'POST',
+      body: JSON.stringify({
+        operation: 'cancel',
+        time: '',
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+  });
+
+  screenshotButton.addEventListener('click', async () => {
+    const response = await fetch('/api/screenshot', {
+      method: 'POST'
+    });
+
+    const data = await response.json();
+
+    for (const image of data['images']) {
+      const img = document.createElement('img');
+      img.src = `data:image/png;base64,${image}`;
+      img.classList.add('screenshot');
+      document.body.appendChild(img);
+    }
+  });
+
+</script>

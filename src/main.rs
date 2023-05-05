@@ -1,4 +1,4 @@
-// #![windows_subsystem = "windows"]
+#![windows_subsystem = "windows"]
 
 use std::net::SocketAddr;
 use axum::{routing::post, Router};

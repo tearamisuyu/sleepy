@@ -98,8 +98,25 @@
   const cancelButton = document.querySelector('.shutdown-cancel');
   const screenshotContainer = document.querySelector('.screenshot-container');
 
+  const playShutdownAudio = () => {
+    const audio = new Audio('/shutdown.mp3');
+    audio.play();
+  }
+
+  const playCancelAudio = () => {
+    const audio = new Audio('/cancel.mp3');
+    audio.volume = 0.2;
+    audio.play();
+  }
+
+  const playScreenshotAudio = () => {
+    const audio = new Audio('/screenshot.mp3');
+    audio.play();
+  }
+
   shutdownButton.addEventListener('click', () => {
     const timer = document.querySelector('.shutdown-timer').value;
+    playShutdownAudio();
 
     fetch('/api/shutdown', {
       method: 'POST',
@@ -116,6 +133,7 @@
   });
 
   cancelButton.addEventListener('click', () => {
+    playCancelAudio();
     fetch('/api/shutdown', {
       method: 'POST',
       body: JSON.stringify({
@@ -125,10 +143,11 @@
       headers: {
         'Content-Type': 'application/json'
       }
-    })
+    });
   });
 
   screenshotButton.addEventListener('click', async () => {
+    playScreenshotAudio();
     const response = await fetch('/api/screenshot', {
       method: 'POST'
     });

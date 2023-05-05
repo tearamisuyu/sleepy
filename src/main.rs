@@ -1,4 +1,4 @@
-#![windows_subsystem = "windows"]
+// #![windows_subsystem = "windows"]
 
 use std::net::SocketAddr;
 use axum::{routing::post, Router};
@@ -16,7 +16,7 @@ async fn main() {
         .route("/api/screenshot", post(handler::screenshot::screenshot))
         .nest_service("/", ServeDir::new(config.appdata_path));
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    let addr = SocketAddr::from(([127, 0, 0, 1], 3285));
 
     axum::Server::bind(&addr)
         .serve(app.into_make_service())

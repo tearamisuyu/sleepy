@@ -5,7 +5,8 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image" href="https://cdn.discordapp.com/attachments/557281913757368350/1103199775295287316/IMG_20230422_120619_989.png">
+  <link rel="icon" type="image"
+    href="https://cdn.discordapp.com/attachments/557281913757368350/1103199775295287316/IMG_20230422_120619_989.png">
   <title>sleepy</title>
 </head>
 
@@ -89,7 +90,6 @@
     height: auto;
     margin-top: 1rem;
   }
-
 </style>
 
 <script>
@@ -98,8 +98,22 @@
   const cancelButton = document.querySelector('.shutdown-cancel');
   const screenshotContainer = document.querySelector('.screenshot-container');
 
+  const asyncTimer = async (time, timerDisplay) => {
+    for (let i = 0; i < time; i++) {
+      await new Promise((resolve, reject) => {
+        console.log(i);
+        setTimeout(() => {
+          resolve();
+        }, 1000);
+      });
+
+      timerDisplay.innerText = parseInt(time) - i; 
+    }
+  }
+
   const playShutdownAudio = () => {
     const audio = new Audio('/shutdown.mp3');
+
     audio.play();
   }
 
@@ -114,8 +128,13 @@
     audio.play();
   }
 
-  shutdownButton.addEventListener('click', () => {
+  shutdownButton.addEventListener('click', async () => {
     const timer = document.querySelector('.shutdown-timer').value;
+    const timerDisplay = document.createElement('h1');
+    timerDisplay.classList.add('timer-display');
+    timerDisplay.innerText = timer;
+    document.body.appendChild(timerDisplay);
+
     playShutdownAudio();
 
     fetch('/api/shutdown', {
@@ -127,12 +146,17 @@
       headers: {
         'Content-Type': 'application/json'
       }
-    })
+    });
+
+    await asyncTimer(timer, timerDisplay);
 
     console.log(timer);
   });
 
   cancelButton.addEventListener('click', () => {
+    const timerDisplay = document.querySelector('.timer-display');
+    timerDisplay.remove();
+
     playCancelAudio();
     fetch('/api/shutdown', {
       method: 'POST',

@@ -16,7 +16,7 @@ async fn main() {
         .route("/api/screenshot", post(handler::screenshot::screenshot))
         .nest_service("/", ServeDir::new(config.appdata_path));
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3285));
+    let addr = SocketAddr::from(([0, 0, 0, 0], 3285));
 
     axum::Server::bind(&addr)
         .serve(app.into_make_service())

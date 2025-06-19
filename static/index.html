@@ -17,9 +17,8 @@
     <button class="shutdown-button button">shutdown</button>
     <button class="shutdown-cancel button">cancel</button>
     <button class="screenshot-button button">screenshot</button>
-    <div class="screenshot-container">
-
-    </div>
+    <div class="screenshot-container" />
+    <img src="/api/video" />
   </div>
 </body>
 
@@ -178,7 +177,7 @@
 
     const data = await response.json();
 
-    for (const image of data['images']) {
+    for (const image of data) {
       const img = document.createElement('img');
       img.src = `data:image/png;base64,${image}`;
       img.classList.add('screenshot');

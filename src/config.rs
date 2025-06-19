@@ -1,31 +1,27 @@
+use std::fs;
+use toml::de::Error;
+
+#[derive(serde::Deserialize)]
+pub struct Server {
+    pub port: u16,
+    pub static_dir: String,
+}
+
+#[derive(serde::Deserialize)]
 pub struct Config {
-    pub appdata_path: String,
+    pub server: Server,
 }
 
 impl Config {
-    pub fn new() -> Self {
-        let name = match std::env::var("USERNAME") {
-            Ok(username) => username,
-            Err(_) => match std::env::var("USER") {
-                Ok(username) => username,
-                Err(_) => String::from("unknown"),
-            },
-        };
+    pub fn new() -> Result<Self, Error> {
+        let config_path = "config.toml";
 
-        let env = match std::env::var("ENV") {
-            Ok(env) => env,
-            Err(_) => String::from("prod"),
-        };
-        let mut config: Config = Config {
-            appdata_path: String::from(""),
-        };
-
-        if env == "dev" {
-            config.appdata_path = String::from("./data");
-        } else {
-            config.appdata_path = String::from(format!("C:\\Users\\{}\\AppData\\Roaming\\sleepy\\", &name));
-        }
-
-        config
+        let toml_string = fs::read_to_string(config_path)
+            .expect("Could not read config file");
+        
+        let config: Config = toml::from_str(&toml_string)
+            .expect("Could not parse config file");
+        
+        Ok(config)
     }
 }

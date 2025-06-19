@@ -1,28 +1,20 @@
-use axum::{
-    Json,
-    response::IntoResponse
-};
-use base64::{Engine as _, engine::general_purpose};
+use axum::{response::IntoResponse, Json};
+use base64::{engine::general_purpose, Engine as _};
+use rayon::prelude::*;
 use screenshots::Screen;
-use serde::Serialize;
-
-#[derive(Serialize)]
-pub struct ScreenshotResponse {
-    pub images: Vec<String>
-}
 
 pub async fn screenshot() -> impl IntoResponse {
     let screens = Screen::all().unwrap();
-    let mut images: Vec<String> = vec![];
-    
-    for screen in screens {
-        let image = screen.capture().unwrap();
-        let buffer = image.buffer();
-        let encoded = general_purpose::STANDARD.encode(buffer);
-        images.push(encoded);
-    }
 
-    Json(ScreenshotResponse {
-        images
-    }).into_response()
+    let images: Vec<String> = screens
+        .into_par_iter()
+        .filter_map(|screen| {
+            screen.capture().ok().map(|image| {
+                let buffer = image.buffer();
+                general_purpose::STANDARD.encode(buffer)
+            })
+        })
+        .collect();
+
+    Json(images).into_response()
 }

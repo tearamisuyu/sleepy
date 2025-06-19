@@ -4,32 +4,29 @@ use serde::Deserialize;
 
 #[derive(Deserialize)]
 pub struct ShutdownRequest {
-    operation: String,
+    action: String,
     time: String
 }
 
 pub async fn shutdown(req: axum::Json<ShutdownRequest>) -> impl IntoResponse {
-    let operation = &*req.operation;
-    let time = &req.time;
+    let time: &str = &req.time;
 
-    println!("Received shutdown request: {} at {}", operation, time);
+    println!("Shutdown in {} seconds", time);
 
-    match operation {
+    match req.action.as_str() {
         "shutdown" => {
-            println!("Shutting down");
-
-            if time != "" {
+            if !time.is_empty() {
                 std::process::Command::new("shutdown")
                     .args(&["/s", "/t", time, "/f"])
                     .spawn()
                     .expect("Failed to shutdown");
-                return (StatusCode::OK, String::from("Request received"))
+                (StatusCode::OK, String::from("Request received"))
             } else {
                 std::process::Command::new("shutdown")
                     .args(&["/s", "/t", "0", "/f"])
                     .spawn()
                     .expect("Failed to shutdown");
-                return (StatusCode::OK, String::from("Request received"))
+                (StatusCode::OK, String::from("Request received"))
             }
 
         },
@@ -39,12 +36,10 @@ pub async fn shutdown(req: axum::Json<ShutdownRequest>) -> impl IntoResponse {
                 .args(&["/a"])
                 .spawn()
                 .expect("Failed to cancel shutdown");
+            (StatusCode::OK, String::from("Shutdown cancelled"))
         },
         _ => {
-            return (StatusCode::BAD_REQUEST, String::from("Invalid operation"))
+            (StatusCode::BAD_REQUEST, String::from("Invalid action"))
         }
     }
-
-
-    (StatusCode::OK, String::from("Request received"))
 }

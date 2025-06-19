@@ -1,0 +1,7 @@
+[server]
+port = 5000
+static_dir = 'static'
+
+[security]
+whitelist = []
+blacklist = []

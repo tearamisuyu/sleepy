@@ -1,20 +1,22 @@
+use std::net::SocketAddr;
+use axum::extract::ConnectInfo;
 use axum::response::IntoResponse;
 use axum::http::StatusCode;
+use log::info;
 use serde::Deserialize;
 
 #[derive(Deserialize)]
 pub struct ShutdownRequest {
-    action: String,
+    code: u8,
     time: String
 }
 
-pub async fn shutdown(req: axum::Json<ShutdownRequest>) -> impl IntoResponse {
+pub async fn shutdown(ConnectInfo(addr): ConnectInfo<SocketAddr>, req: axum::Json<ShutdownRequest>) -> impl IntoResponse {
     let time: &str = &req.time;
 
-    println!("Shutdown in {} seconds", time);
-
-    match req.action.as_str() {
-        "shutdown" => {
+    match req.code {
+        0 => {
+            info!("Received shutdown request from {}", addr);
             if !time.is_empty() {
                 std::process::Command::new("shutdown")
                     .args(&["/s", "/t", time, "/f"])
@@ -30,8 +32,9 @@ pub async fn shutdown(req: axum::Json<ShutdownRequest>) -> impl IntoResponse {
             }
 
         },
-        "cancel" => {
-            println!("Cancelling shutdown");
+        1 => {
+            info!("Received shutdown cancel request from {}", addr);
+            info!("Cancelling shutdown");
             std::process::Command::new("shutdown")
                 .args(&["/a"])
                 .spawn()

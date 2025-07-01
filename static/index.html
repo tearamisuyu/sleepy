@@ -1,188 +1,856 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Change the icon -->
-  <link rel="icon" type="image"
-    href="/icon.webp">
+  <link rel="icon" type="image/x-icon" href="/assets/icon.png">
   <title>sleepy</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap');
+    /* Playfair Display for a more elegant, melancholic title, Inter for main text */
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Inter', sans-serif; /* Using Inter for general text */
+      background: #110B22; /* Dark purplish-blue, like a night sky */
+      color: #D0D0D0; /* Muted lighter text */
+      transition: background 0.5s ease;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      border-radius: 15px; /* Softer, larger rounded corners */
+      overflow: hidden;
+      background: #20183B; /* Slightly lighter, complementary dark purplish for container */
+      box-shadow: 0 15px 40px rgba(0,0,0,0.7); /* Deeper, more diffused shadow */
+      padding: 30px;
+      border: 1px solid rgba(50,50,50,0.5); /* Very subtle, dark border */
+      transition: box-shadow 0.5s ease;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif; /* Elegant serif font for title */
+      color: #E0E0E0; /* Neutral color, rely on text-shadow for glow */
+      text-align: center;
+      margin-bottom: 40px;
+      font-size: 3.5em; /* Larger title */
+      text-shadow: 0 0 15px rgba(93, 109, 187, 0.7), /* Bluish-purple glow */
+      0 0 30px rgba(255, 105, 180, 0.5), /* Pink glow */
+      0 0 45px rgba(93, 109, 187, 0.3); /* Deeper bluish-purple glow */
+      letter-spacing: 8px; /* Significantly increased spacing */
+      transition: color 0.3s ease, text-shadow 0.3s ease;
+    }
+
+    .controls {
+      margin-bottom: 30px;
+      text-align: center;
+      padding: 25px;
+      background: #2B244F; /* Complementary dark purplish for control panel */
+      border-radius: 12px; /* Softly rounded corners */
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.6); /* Inset shadow for depth */
+      border: 1px solid rgba(60,60,60,0.5); /* Subtle inner border */
+      display: flex; /* Use flexbox for button layout */
+      flex-wrap: wrap; /* Allow buttons to wrap */
+      justify-content: center; /* Center buttons */
+      gap: 20px; /* Space between buttons */
+    }
+
+    button {
+      background: linear-gradient(145deg, #5D6DBB, #3F4A95); /* Deep, shifting bluish-purple gradient */
+      color: #E0E0E0; /* Muted white text */
+      border: none;
+      padding: 15px 35px;
+      border-radius: 8px; /* Less rounded, more solid button */
+      cursor: pointer;
+      font-size: 17px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.4), inset 0 0 5px rgba(255,255,255,0.1); /* Deeper shadow, subtle inner light */
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      flex-grow: 1; /* Allow buttons to grow */
+      max-width: 250px; /* Max width for buttons */
+    }
+
+    button:hover {
+      background: linear-gradient(145deg, #3F4A95, #5D6DBB); /* Reverse gradient on hover */
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6), inset 0 0 8px rgba(255,255,255,0.15);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3), inset 0 0 3px rgba(255,255,255,0.05);
+    }
+
+    button:disabled {
+      background: #252525;
+      color: #606060;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .stop-btn {
+      background: linear-gradient(145deg, #FF69B4, #C71585); /* Vibrant pink gradient */
+    }
+
+    .stop-btn:hover {
+      background: linear-gradient(145deg, #C71585, #FF69B4); /* Reverse pink gradient on hover */
+    }
+
+    .stream-container {
+      text-align: center;
+      background: #1E1E1E; /* Matches control panel background */
+      border-radius: 12px; /* Softly rounded corners */
+      padding: 30px;
+      min-height: 500px; /* Taller container */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6); /* Deep shadow */
+      margin-top: 30px;
+      border: 1px solid rgba(60,60,60,0.5);
+      margin-bottom: 30px; /* Add margin below for gallery */
+
+      /* Flexbox for multiple screens */
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px; /* Space between multiple screens */
+      justify-content: center;
+      align-items: flex-start; /* Align items to the start of the cross axis */
+    }
+
+    .screen-display-image {
+      max-width: 100%; /* Default to full width for single image */
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      object-fit: contain;
+      border: 2px solid #5D6DBB;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      flex-basis: calc(50% - 10px); /* For two images side-by-side with gap */
+      min-width: 300px; /* Ensure images don't get too small on wider screens */
+    }
+
+    /* Adjust flex-basis for odd number of screens or single screen */
+    .stream-container.single-screen .screen-display-image {
+      flex-basis: 100%;
+    }
+    /* For 3 screens, if needed */
+    .stream-container.three-screens .screen-display-image {
+      flex-basis: calc(33.33% - 14px); /* Approx 3 per row with gaps */
+    }
+
+
+    #streamImage { /* Kept for reference but not directly used for display now */
+      display: none;
+    }
+    #placeholder {
+      text-align: center;
+      color: #9FA8DA;
+      padding: 20px;
+    }
+
+    .status {
+      margin-top: 25px;
+      font-size: 17px;
+      color: #B0B0B0; /* Muted grey for status */
+      font-weight: 400;
+      letter-spacing: 0.3px;
+    }
+
+    .connected {
+      color: #4CAF50; /* Keep green for positive status */
+    }
+
+    .disconnected {
+      color: #FF6347; /* Muted, slightly desaturated red for disconnection/error */
+    }
+
+    .loading {
+      color: #DAA520; /* Darker, golden yellow for loading */
+    }
+
+    /* --- Screenshot Gallery Styles --- */
+    .gallery-section {
+      background: #20183B; /* Matches container background */
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      border: 1px solid rgba(50,50,50,0.5);
+    }
+
+    .gallery-section h2 {
+      font-family: 'Playfair Display', serif;
+      color: #A0A0FF;
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 2.2em;
+      text-shadow: 0 0 10px rgba(160, 160, 255, 0.4);
+    }
+
+    #screenshotGallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Responsive grid */
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .gallery-item {
+      background: #1A1A1A;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border: 1px solid rgba(60,60,60,0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px;
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.6);
+    }
+
+    .gallery-item img {
+      max-width: 100%;
+      height: 100px; /* Fixed height for thumbnails */
+      object-fit: cover; /* Cover the area, cropping if necessary */
+      border-radius: 4px;
+      border: 1px solid rgba(93, 109, 187, 0.5); /* Bluish-purple border */
+      margin-bottom: 10px;
+    }
+
+    .gallery-item span {
+      font-size: 0.85em;
+      color: #C0C0C0;
+      text-align: center;
+    }
+
+
+    /* --- Enlarged Image Modal --- */
+    .enlarged-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.95);
+      display: none; /* Hidden by default */
+      align-items: center;
+      justify-content: center;
+      z-index: 2000; /* Higher than shutdown dialog */
+      backdrop-filter: blur(10px) brightness(0.5);
+      animation: fadeInOverlay 0.3s ease-out;
+    }
+
+    .enlarged-modal-content {
+      position: relative;
+      max-width: 90%;
+      max-height: 90%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .enlarged-modal-content img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 10px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.8);
+      border: 2px solid #5D6DBB;
+    }
+
+    .close-modal-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #FF69B4;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease, transform 0.2s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    }
+
+    .close-modal-btn:hover {
+      background: #C71585;
+      transform: scale(1.1);
+    }
+
+    /* Dialog styles (more dramatic and imposing) */
+    .shutdown-dialog {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.95); /* Nearly opaque overlay */
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(8px) brightness(0.6); /* Stronger blur and darken */
+      animation: fadeInOverlay 0.4s ease-out;
+    }
+
+    @keyframes fadeInOverlay {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .dialog-content {
+      background: #1A1A1A; /* Very dark dialog background */
+      padding: 40px;
+      border-radius: 20px; /* Very rounded dialog */
+      text-align: center;
+      max-width: 550px; /* Wider dialog */
+      width: 90%; /* Ensure responsiveness */
+      box-shadow: 0 15px 60px rgba(0,0,0,0.9); /* Extreme shadow for presence */
+      border: 2px solid #5D6DBB; /* Deep bluish-purple accent border */
+      animation: slideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smoother slide-in */
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-50px) scale(0.8); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .dialog-content h3 {
+      margin-top: 0;
+      color: #FF69B4; /* Pink for warning */
+      font-family: 'Playfair Display', serif;
+      font-size: 32px; /* Larger heading */
+      margin-bottom: 30px;
+      text-shadow: 0 0 10px rgba(255, 105, 180, 0.6), 0 0 20px rgba(255, 105, 180, 0.3); /* Pink glow */
+    }
+
+    .dialog-content p {
+      color: #C0C0C0;
+      font-size: 18px;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .dialog-controls {
+      margin: 30px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap; /* Allow wrapping for inputs/labels */
+    }
+
+    .dialog-controls label {
+      font-size: 18px;
+      color: #9FA8DA; /* Ethereal bluish-purple for label */
+    }
+
+    .dialog-controls input {
+      background: #252525;
+      color: #DAA520; /* Golden text for input */
+      border: 2px solid #404040; /* Darker, more solid border */
+      padding: 14px;
+      border-radius: 10px;
+      width: 140px; /* Wider input */
+      text-align: center;
+      font-size: 18px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .dialog-controls input:focus {
+      border-color: #5D6DBB; /* Deep bluish-purple border on focus */
+      box-shadow: 0 0 15px rgba(93, 109, 187, 0.7);
+      outline: none;
+    }
+
+    .dialog-buttons {
+      margin-top: 35px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 25px;
+    }
+
+    .dialog-buttons button {
+      padding: 14px 30px;
+      font-size: 17px;
+      border-radius: 10px; /* Matches dialog content rounding */
+      margin: 0;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      text-transform: capitalize; /* Don't force uppercase here */
+      flex-grow: 1; /* Allow dialog buttons to grow */
+      max-width: 200px; /* Max width for dialog buttons */
+    }
+
+    /* --- Mobile Responsiveness --- */
+
+    /* Tablets and smaller desktops */
+    @media screen and (max-width: 768px) {
+      body {
+        padding: 15px;
+      }
+
+      .container {
+        padding: 20px;
+        border-radius: 10px;
+      }
+
+      h1 {
+        font-size: 2.8em; /* Slightly smaller title */
+        margin-bottom: 30px;
+        letter-spacing: 6px;
+      }
+
+      .controls {
+        padding: 15px;
+        gap: 15px; /* Reduce gap between buttons */
+      }
+
+      button {
+        padding: 12px 25px;
+        font-size: 16px;
+        flex-basis: 45%; /* Two buttons per row on smaller screens */
+        max-width: unset; /* Remove max-width to allow flex-basis to work */
+      }
+
+      .stream-container {
+        padding: 20px;
+        min-height: 400px; /* Reduce min-height */
+        margin-top: 20px;
+      }
+
+      .status {
+        font-size: 15px;
+        margin-top: 15px;
+      }
+
+      .dialog-content {
+        padding: 30px;
+        border-radius: 15px;
+      }
+
+      .dialog-content h3 {
+        font-size: 28px;
+        margin-bottom: 25px;
+      }
+
+      .dialog-content p {
+        font-size: 16px;
+        margin-bottom: 25px;
+      }
+
+      .dialog-controls {
+        gap: 10px;
+      }
+
+      .dialog-controls label {
+        font-size: 16px;
+      }
+
+      .dialog-controls input {
+        padding: 12px;
+        width: 100px; /* Slightly narrower input */
+        font-size: 16px;
+      }
+
+      .dialog-buttons {
+        gap: 15px;
+      }
+
+      .dialog-buttons button {
+        padding: 12px 25px;
+        font-size: 16px;
+        flex-basis: 48%; /* Adjust for 2 buttons per row */
+        max-width: unset;
+      }
+
+      .gallery-section {
+        padding: 20px;
+      }
+
+      #screenshotGallery {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Smaller thumbnails */
+        gap: 15px;
+      }
+
+      .gallery-item img {
+        height: 80px; /* Smaller thumbnail height */
+      }
+
+      .enlarged-modal-content {
+        max-width: 95%;
+        max-height: 95%;
+      }
+
+      .close-modal-btn {
+        top: 10px;
+        right: 10px;
+        width: 35px;
+        height: 35px;
+        font-size: 20px;
+      }
+    }
+
+    /* Smaller mobile devices */
+    @media screen and (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        padding: 15px;
+        border-radius: 8px;
+      }
+
+      h1 {
+        font-size: 2.2em; /* Even smaller title */
+        margin-bottom: 25px;
+        letter-spacing: 4px;
+      }
+
+      .controls {
+        padding: 10px;
+        gap: 10px; /* Even less gap */
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 14px;
+        flex-basis: 100%; /* Stack buttons vertically */
+        max-width: unset; /* Ensure it takes full width */
+      }
+
+      .stream-container {
+        padding: 15px;
+        min-height: 300px; /* Further reduce min-height */
+        margin-top: 15px;
+      }
+
+      .status {
+        font-size: 14px;
+        margin-top: 10px;
+      }
+
+      .dialog-content {
+        padding: 20px;
+        border-radius: 12px;
+      }
+
+      .dialog-content h3 {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+
+      .dialog-content p {
+        font-size: 15px;
+        margin-bottom: 20px;
+      }
+
+      .dialog-controls {
+        flex-direction: column; /* Stack label and input */
+        gap: 10px;
+      }
+
+      .dialog-controls input {
+        width: 80%; /* Wider input on small screens */
+      }
+
+      .dialog-buttons {
+        flex-direction: column; /* Stack dialog buttons */
+        gap: 10px;
+        align-items: center; /* Center stacked buttons */
+      }
+
+      .dialog-buttons button {
+        padding: 10px 20px;
+        font-size: 15px;
+        width: 90%; /* Make dialog buttons nearly full width */
+        max-width: unset;
+      }
+
+      .gallery-section {
+        padding: 15px;
+      }
+
+      #screenshotGallery {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Even smaller thumbnails */
+        gap: 10px;
+      }
+
+      .gallery-item img {
+        height: 60px; /* Even smaller thumbnail height */
+      }
+    }
+  </style>
 </head>
-
 <body>
-  <div class="container">
-    <h1 class="title">sleepy</h1>
-    <input class="shutdown-timer" placeholder="timer" type="text">
-    <button class="shutdown-button button">shutdown</button>
-    <button class="shutdown-cancel button">cancel</button>
-    <button class="screenshot-button button">screenshot</button>
-    <div class="screenshot-container" />
+<div class="container">
+  <h1>sleepy</h1>
+
+  <div class="controls">
+    <button id="screenshotBtn" onclick="takeScreenshot()">Take Screenshot</button>
+    <button id="shutdownBtn" onclick="showShutdownDialog()" class="stop-btn">Shutdown System</button>
+    <div class="status">
+      Status: <span id="status" class="connected">Ready</span>
+    </div>
   </div>
-</body>
 
-</html>
+  <div class="stream-container" id="imageContainer">
+    <!-- Images will be dynamically added here -->
+    <div id="placeholder" style="text-align: center; color: #9FA8DA; padding: 20px;">
+    </div>
+  </div>
 
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
+  <div class="gallery-section">
+    <h2>Screenshot History</h2>
+    <div id="screenshotGallery">
+      <!-- Screenshot thumbnails will be added here -->
+    </div>
+  </div>
+</div>
 
-  body {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
+<!-- Shutdown Dialog -->
+<div id="shutdownDialog" class="shutdown-dialog">
+  <div class="dialog-content">
+    <h3>System Shutdown</h3>
+    <p>Are you sure you want to shut down the system?</p>
+    <div class="dialog-controls">
+      <label for="shutdownDelay">Seconds: </label>
+      <input type="number" id="shutdownDelay" value="0" min="0" max="3600">
+    </div>
+    <div class="dialog-buttons">
+      <button onclick="executeShutdown()">Confirm Shutdown</button>
+      <button onclick="cancelShutdown()" class="stop-btn">Abort</button>
+      <button onclick="closeShutdownDialog()">Close Dialog</button>
+    </div>
+  </div>
+</div>
 
-  :root {
-    color: whitesmoke;
-    font-family: 'Noto Sans', sans-serif;
-    background-color: rgb(36, 36, 65);
-  }
-
-  .container {
-    display: flex;
-    flex-direction: column;
-    user-select: none;
-    max-width: 412px;
-    justify-content: center;
-  }
-
-  .title {
-    text-align: center;
-    letter-spacing: 0.2rem;
-  }
-
-  .button {
-    margin: 0.5rem;
-    padding: 10px;
-    color: whitesmoke;
-    border: solid white 1px;
-    border-radius: 5rem;
-    font-family: 'Noto Sans', sans-serif;
-    letter-spacing: 0.1rem;
-    text-decoration: none;
-    font-weight: bold;
-    background-color: rgb(41, 36, 66);
-    transition: 0.5s;
-  }
-
-  .button:hover {
-    transition: 0.5s;
-    background-color: rgb(36, 36, 65);
-    cursor: pointer;
-  }
-
-  .shutdown-timer {
-    color: whitesmoke;
-    text-align: center;
-    font-size: 1.5rem;
-    border: none;
-    margin: 1rem;
-    outline: none;
-    background-color: inherit;
-  }
-
-  .screenshot {
-    align-items: center;
-    max-width: 412px;
-    height: auto;
-    margin-top: 1rem;
-  }
-</style>
+<!-- Enlarged Image Modal -->
+<div id="enlargedImageModal" class="enlarged-modal">
+  <div class="enlarged-modal-content">
+    <img id="enlargedImage" src="" alt="Enlarged Screenshot">
+    <button class="close-modal-btn" onclick="closeEnlargedModal()">&times;</button>
+  </div>
+</div>
 
 <script>
-  const shutdownButton = document.querySelector('.shutdown-button');
-  const screenshotButton = document.querySelector('.screenshot-button');
-  const cancelButton = document.querySelector('.shutdown-cancel');
-  const screenshotContainer = document.querySelector('.screenshot-container');
+  const statusSpan = document.getElementById('status');
+  const imageContainer = document.getElementById('imageContainer'); // Reference to the container
+  const placeholder = document.getElementById('placeholder');
+  const screenshotGallery = document.getElementById('screenshotGallery');
+  const enlargedImageModal = document.getElementById('enlargedImageModal');
+  const enlargedImage = document.getElementById('enlargedImage');
 
-  const asyncTimer = async (time, timerDisplay) => {
-    for (let i = 0; i < time; i++) {
-      await new Promise((resolve, reject) => {
-        console.log(i);
-        setTimeout(() => {
-          resolve();
-        }, 1000);
+  /**
+   * Updates the status message displayed on the page.
+   * @param {string} message - The message to display.
+   * @param {string} className - The CSS class for styling the status (e.g., 'connected', 'disconnected', 'loading').
+   */
+  function updateStatus(message, className) {
+    statusSpan.textContent = message;
+    statusSpan.className = className;
+  }
+
+  /**
+   * Opens the enlarged image modal with the given image source.
+   * @param {string} imgSrc - The source URL of the image to display.
+   */
+  function openEnlargedModal(imgSrc) {
+    console.log('Attempting to open enlarged modal with:', imgSrc); // Debug log
+    enlargedImage.src = imgSrc;
+    enlargedImageModal.style.display = 'flex';
+  }
+
+  /**
+   * Closes the enlarged image modal.
+   */
+  function closeEnlargedModal() {
+    enlargedImageModal.style.display = 'none';
+    enlargedImage.src = ''; // Clear the image source
+  }
+
+  /**
+   * Sends a request to the server to take a screenshot and displays it.
+   * Handles multiple screenshots if returned by the API.
+   */
+  async function takeScreenshot() {
+    updateStatus('Initiating capture...', 'loading');
+    try {
+      const response = await fetch('/api/screenshot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
 
-      timerDisplay.innerText = parseInt(time) - i; 
+      if (response.ok) {
+        const screenshots = await response.json(); // Expecting an array of base64 images
+
+        // Clear previous images in the main viewer
+        imageContainer.innerHTML = '';
+        placeholder.style.display = 'none'; // Hide placeholder if images are coming
+
+        if (screenshots && screenshots.length > 0) {
+          // Dynamically add classes for styling based on number of screens
+          imageContainer.classList.remove('single-screen', 'three-screens');
+          if (screenshots.length === 1) {
+            imageContainer.classList.add('single-screen');
+          } else if (screenshots.length === 3) {
+            imageContainer.classList.add('three-screens');
+          }
+
+          screenshots.forEach((screenshotData, index) => {
+            // Create image for main viewer
+            const screenImage = document.createElement('img');
+            screenImage.className = 'screen-display-image';
+            screenImage.src = `data:image/png;base64,${screenshotData}`;
+            screenImage.alt = `Screen ${index + 1}`;
+            imageContainer.appendChild(screenImage);
+
+            // Create thumbnail for gallery history
+            const galleryItem = document.createElement('div');
+            galleryItem.className = 'gallery-item';
+            // Use a closure to capture screenshotData for onclick
+            galleryItem.onclick = (() => {
+              const currentScreenshotData = `data:image/png;base64,${screenshotData}`;
+              return () => openEnlargedModal(currentScreenshotData);
+            })();
+
+            const img = document.createElement('img');
+            img.src = `data:image/png;base64,${screenshotData}`;
+            img.alt = `Screenshot ${new Date().toLocaleTimeString()} - Screen ${index + 1}`;
+
+            const timestamp = document.createElement('span');
+            timestamp.textContent = `Screen ${index + 1} (${new Date().toLocaleTimeString()})`;
+
+            galleryItem.appendChild(img);
+            galleryItem.appendChild(timestamp);
+
+            // Add the new item to the beginning of the gallery
+            screenshotGallery.prepend(galleryItem);
+          });
+
+          updateStatus(`Captured ${screenshots.length} screen(s).`, 'connected');
+        } else {
+          // If no screenshots are returned, show placeholder
+          imageContainer.innerHTML = ''; // Clear any existing images
+          imageContainer.appendChild(placeholder);
+          placeholder.style.display = 'block';
+          updateStatus('No screen data received.', 'disconnected');
+        }
+      } else {
+        console.error('Failed to capture screen:', response.status, response.statusText);
+        const errorText = await response.text();
+        updateStatus(`Capture failed: ${errorText}`, 'disconnected');
+        // Ensure placeholder is shown on error
+        imageContainer.innerHTML = '';
+        imageContainer.appendChild(placeholder);
+        placeholder.style.display = 'block';
+      }
+    } catch (error) {
+      console.error('Error during screen capture:', error);
+      updateStatus('Error during capture.', 'disconnected');
+      // Ensure placeholder is shown on error
+      imageContainer.innerHTML = '';
+      imageContainer.appendChild(placeholder);
+      placeholder.style.display = 'block';
     }
   }
 
-  const playShutdownAudio = () => {
-    const audio = new Audio('/shutdown.mp3');
-
-    audio.play();
+  /**
+   * Shows the system shutdown confirmation dialog.
+   */
+  function showShutdownDialog() {
+    document.getElementById('shutdownDialog').style.display = 'flex';
   }
 
-  const playCancelAudio = () => {
-    const audio = new Audio('/cancel.mp3');
-    audio.volume = 0.2;
-    audio.play();
+  /**
+   * Closes the system shutdown confirmation dialog.
+   */
+  function closeShutdownDialog() {
+    document.getElementById('shutdownDialog').style.display = 'none';
   }
 
-  const playScreenshotAudio = () => {
-    const audio = new Audio('/screenshot.mp3');
-    audio.play();
-  }
+  /**
+   * Executes the system shutdown command with a specified delay.
+   */
+  async function executeShutdown() {
+    const delay = document.getElementById('shutdownDelay').value;
+    updateStatus(`Scheduling system slumber in ${delay}s...`, 'loading');
 
-  shutdownButton.addEventListener('click', async () => {
-    const timer = document.querySelector('.shutdown-timer').value;
-    const timerDisplay = document.createElement('h1');
-    timerDisplay.classList.add('timer-display');
-    timerDisplay.innerText = timer;
-    document.body.appendChild(timerDisplay);
+    try {
+      const response = await fetch('/api/shutdown', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          code: 0,
+          time: delay.toString()
+        })
+      });
 
-    playShutdownAudio();
-
-    fetch('/api/shutdown', {
-      method: 'POST',
-      body: JSON.stringify({
-        operation: 'shutdown',
-        time: timer,
-      }),
-      headers: {
-        'Content-Type': 'application/json'
+      if (response.ok) {
+        const result = await response.text();
+        updateStatus(`System will sleep in ${delay} seconds.`, 'connected');
+        closeShutdownDialog();
+      } else {
+        console.error('Failed to schedule shutdown:', response.status, response.statusText);
+        const errorText = await response.text();
+        updateStatus(`Slumber scheduling failed: ${errorText}`, 'disconnected');
       }
-    });
-
-    await asyncTimer(timer, timerDisplay);
-
-    console.log(timer);
-  });
-
-  cancelButton.addEventListener('click', () => {
-    const timerDisplay = document.querySelector('.timer-display');
-    timerDisplay.remove();
-
-    playCancelAudio();
-    fetch('/api/shutdown', {
-      method: 'POST',
-      body: JSON.stringify({
-        operation: 'cancel',
-        time: '',
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-  });
-
-  screenshotButton.addEventListener('click', async () => {
-    playScreenshotAudio();
-    const response = await fetch('/api/screenshot', {
-      method: 'POST'
-    });
-
-    const data = await response.json();
-
-    for (const image of data) {
-      const img = document.createElement('img');
-      img.src = `data:image/png;base64,${image}`;
-      img.classList.add('screenshot');
-      document.body.appendChild(img);
+    } catch (error) {
+      console.error('Error executing shutdown:', error);
+      updateStatus('Error scheduling slumber.', 'disconnected');
     }
-  });
+  }
 
+  /**
+   * Cancels a previously scheduled system shutdown.
+   */
+  async function cancelShutdown() {
+    updateStatus('Attempting to awaken system...', 'loading');
+    try {
+      const response = await fetch('/api/shutdown', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          code: 1,
+          time: ''
+        })
+      });
+
+      if (response.ok) {
+        updateStatus('System slumber aborted.', 'connected');
+        closeShutdownDialog();
+      } else {
+        console.error('Failed to cancel shutdown:', response.status, response.statusText);
+        const errorText = await response.text();
+        updateStatus(`Awakening failed: ${errorText}`, 'disconnected');
+      }
+    } catch (error) {
+      console.error('Error cancelling shutdown:', error);
+      updateStatus('Error during awakening attempt.', 'disconnected');
+    }
+  }
 </script>
+</body>
+</html>
